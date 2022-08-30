@@ -27,7 +27,7 @@ type Response struct {
 	Ctx *gin.Context
 }
 
-func NewResponse(ctx *gin.Context) ResponseInterface {
+func New(ctx *gin.Context) ResponseInterface {
 	var response ResponseInterface = Response{Ctx: ctx}
 	return response
 }
