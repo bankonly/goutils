@@ -28,6 +28,7 @@ type HandlerContext struct {
 	SessionContext mongo.SessionContext
 }
 
+// Handler
 func GoHandler(handler func(HandlerContext), option Options) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		res := response.New(ctx)
