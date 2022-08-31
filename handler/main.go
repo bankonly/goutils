@@ -38,16 +38,11 @@ func GoHandler(handler func(HandlerContext), option Options) gin.HandlerFunc {
 				res.PanicError(http.StatusInternalServerError, response.HError{Message: err.Error(), ErrorCode: "5000"})
 			}
 			defer session.EndSession(context.Background())
-
-			if _, errSession := session.WithTransaction(context.Background(), func(sessCtx mongo.SessionContext) (interface{}, error) {
+			session.WithTransaction(context.Background(), func(sessCtx mongo.SessionContext) (interface{}, error) {
 				handlerOption.SessionContext = sessCtx
 				handler(handlerOption)
 				return nil, nil
-			}); errSession != nil {
-				session.AbortTransaction(context.Background())
-				res.PanicError(http.StatusInternalServerError, response.HError{Message: errSession.Error(), ErrorCode: "5000"})
-			}
-
+			})
 		} else {
 			handler(handlerOption)
 		}
