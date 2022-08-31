@@ -18,35 +18,26 @@ type HandlerFunc struct {
 	Data       interface{}
 }
 
-type Options struct {
-	UseSession bool
-	DBClient   *mongo.Client
-}
-
 type HandlerContext struct {
 	Context        *gin.Context
 	SessionContext mongo.SessionContext
 }
 
 // Handler
-func GoHandler(handler func(HandlerContext), option Options) gin.HandlerFunc {
+func SessionHandler(handler func(HandlerContext), DBClient *mongo.Client) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		res := response.New(ctx)
 		handlerOption := HandlerContext{Context: ctx}
-		if option.UseSession {
-			session, err := option.DBClient.StartSession()
-			if err != nil {
-				res.PanicError(http.StatusInternalServerError, response.HError{Message: err.Error(), ErrorCode: "5000"})
-			}
-			defer session.EndSession(context.Background())
-			session.WithTransaction(context.Background(), func(sessCtx mongo.SessionContext) (interface{}, error) {
-				handlerOption.SessionContext = sessCtx
-				handler(handlerOption)
-				return nil, nil
-			})
-		} else {
-			handler(handlerOption)
+		session, err := DBClient.StartSession()
+		if err != nil {
+			res.PanicError(http.StatusInternalServerError, response.HError{Message: err.Error(), ErrorCode: "5000"})
 		}
+		defer session.EndSession(context.Background())
+		session.WithTransaction(context.Background(), func(sessCtx mongo.SessionContext) (interface{}, error) {
+			handlerOption.SessionContext = sessCtx
+			handler(handlerOption)
+			return nil, nil
+		})
 	}
 }
 
