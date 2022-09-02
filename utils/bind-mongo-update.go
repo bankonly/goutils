@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"reflect"
 	"time"
 
@@ -20,7 +19,6 @@ func BindUpdate(data interface{}) primitive.D {
 		if f.Name != "DefaultField" {
 			field := typeOfS.Field(i).Tag.Get("bson")
 			val := v.Field(i).Interface()
-			fmt.Println(f.Name, typeOfS.Field(i).Tag.Get("bson"), v.Field(i).Interface())
 			result = append(result, bson.E{Key: field, Value: val})
 		}
 	}
