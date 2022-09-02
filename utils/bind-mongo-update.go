@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"reflect"
 	"time"
 
@@ -23,4 +24,16 @@ func BindUpdate(data interface{}) primitive.D {
 		}
 	}
 	return result
+}
+
+func BindCreate(m any) {
+	var inInterface map[string]interface{}
+	inrec, _ := json.Marshal(m)
+	json.Unmarshal(inrec, &inInterface)
+	inInterface["_id"] = primitive.NewObjectID()
+	inInterface["created_at"] = primitive.NewDateTimeFromTime(time.Now())
+	inInterface["updated_at"] = primitive.NewDateTimeFromTime(time.Now())
+	inInterface["is_active"] = true
+	re, _ := json.Marshal(inInterface)
+	json.Unmarshal(re, &m)
 }
