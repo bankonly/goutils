@@ -9,11 +9,11 @@ import (
 	"strconv"
 )
 
-type P struct {
+type POption struct {
 	Message   string
 	ErrorCode string
 }
 
-func Panic(statusCode int, p P) {
+func Panic(statusCode int, p POption) {
 	panic(fmt.Sprintf("%s-%s::%s", strconv.Itoa(statusCode), p.ErrorCode, p.Message))
 }
