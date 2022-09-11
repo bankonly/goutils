@@ -15,5 +15,8 @@ type POption struct {
 }
 
 func Panic(statusCode int, p POption) {
+	if p.ErrorCode == "" {
+		p.ErrorCode = "5000"
+	}
 	panic(fmt.Sprintf("%s-%s::%s", strconv.Itoa(statusCode), p.ErrorCode, p.Message))
 }
