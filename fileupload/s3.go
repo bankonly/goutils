@@ -43,7 +43,7 @@ type UploadResult struct {
 	Filename string
 }
 
-func UploadFile(sess *session.Session, u UploadOption) UploadResult {
+func UploadFile(sess *session.Session, u UploadOption) (UploadResult, error) {
 
 	if u.ACL == "" {
 		u.ACL = "public-read"
@@ -54,7 +54,7 @@ func UploadFile(sess *session.Session, u UploadOption) UploadResult {
 	filename := primitive.NewObjectID().String() + ".jpg"
 	key := u.Path + filename
 
-	uploader.Upload(&s3manager.UploadInput{
+	err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(u.Bucket),
 		Key:    aws.String(key),
 		Body:   u.File,
@@ -65,5 +65,5 @@ func UploadFile(sess *session.Session, u UploadOption) UploadResult {
 	result.FullPath = key
 	result.Filename = filename
 
-	return result
+	return result, err
 }
