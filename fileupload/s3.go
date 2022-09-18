@@ -51,7 +51,7 @@ func UploadFile(sess *session.Session, u UploadOption) (UploadResult, error) {
 
 	uploader := s3manager.NewUploader(sess)
 
-	filename := primitive.NewObjectID().String() + ".jpg"
+	filename := primitive.NewObjectID().Hex() + ".jpg"
 	key := u.Path + filename
 
 	_, err := uploader.Upload(&s3manager.UploadInput{
